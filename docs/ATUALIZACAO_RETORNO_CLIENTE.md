@@ -23,18 +23,17 @@ O teste verifica respostas CRUD no cliente, uma sequência dependente de comando
 erros, concorrência e encerramento. O canal de teste pode ser isolado alterando
 somente CAMINHO_PIPE numa cópia dos fontes antes de compilar.
 
-## Relatório e medições anteriores
+## Relatório e medições atualizados
 
-O Word/PDF e as simulações datadas de 19/09 foram mantidos como documentação da
-versão anterior. As descrições de confirmação de recebimento, instância única e
-resultados apenas no log foram substituídas pelo fluxo explicado acima.
-Os tempos e a distribuição entre threads antigos NÃO medem esta implementação.
-Para novos números, execute python testes/simular.py e analise a nova pasta gerada.
-Uma conexão lenta pode ocupar uma thread na resposta; o protocolo é didático,
-para os clientes locais fornecidos, e não implementa timeout de leitura/escrita.
+Word e PDF agora descrevem o retorno ao cliente e o log, com tabelas, gráfico e
+análise da rodada simulacao_20260920_114551: 60 medições e 122.000 inserções.
+O teste funcional também confere as respostas no cliente. Consulte METODO.md na
+pasta de resultados para o canal IPC isolado e as limitações das medições.
+Os resultados de 19/09 permanecem apenas como histórico, fora da análise atual.
 
 ### Instrucoes fixas no cliente
 
 No terminal interativo do Windows, as instrucoes ficam nas seis primeiras linhas e os comandos/resultados rolam abaixo. CLS limpa a area de uso e redesenha as instrucoes. Use uma janela de pelo menos 40 colunas e 12 linhas. Ao redimensionar, a tela e reorganizada no proximo comando. Em testes com saida redirecionada, a saida permanece texto simples.
 
 Referencia da API de terminal: https://learn.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences#scrolling-margins
+

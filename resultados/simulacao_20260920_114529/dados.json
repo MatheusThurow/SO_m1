@@ -1,0 +1,42 @@
+{
+  "ambiente": {
+    "data": "2026-09-20T11:45:29.931110-03:00",
+    "sistema": "Windows-11-10.0.26200-SP0",
+    "processador": "Intel64 Family 6 Model 151 Stepping 2, GenuineIntel",
+    "processadores_logicos": 12,
+    "python": "3.12.14",
+    "compilador": "g++ (MinGW.org GCC-6.3.0-1) 6.3.0",
+    "flags": "-std=c++11 -Wall -Wextra -Wpedantic -Iinclude -static (sem -O)",
+    "hashes_sha256": {
+      "src\\banco.cpp": "c77f26ecf16568fad7f66f82c3154a559a3f6d5f99a83b684172b9c89c773b4d",
+      "src\\cliente.cpp": "cc7b86d2497a684ea183fa557a7fe5ed6b93c42c756556c433afe7ff178c8693",
+      "src\\ipc.cpp": "eef6c12621fd2f01e7049f84ab7a1a1bb15d4d65047584ea1a75b15576655628",
+      "src\\servidor.cpp": "a6db5c380b83eb7e047922dec437617d6a9e67da186414d7976123338cf735f4",
+      "include\\sistema.hpp": "0a7e830131d82b550f099997db4ffdc3f4dcbf41f7c2ee706ac3fd53937d0c13",
+      "cliente.exe": "cca7dac5d132d72c23364892115de46af70c41b79d3b708c86165cc12453ff32",
+      "servidor.exe": "a655f02fb6521f53cd222cfccde459b97c41a4e7019d7291e5f846e3e9afe553",
+      "testes\\simular.py": "0ae6e5ef7000f266ffcafa59b25ce1789d914fda474bbfc6f29f18ed650aeb5d"
+    }
+  },
+  "metodo": {
+    "threads": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "volumes": [
+      100,
+      1000,
+      5000
+    ],
+    "clientes": 4,
+    "repeticoes": 5,
+    "semente": 20260919,
+    "carga": "INSERT com IDs distintos; banco vazio a cada execucao",
+    "tempo": "Envio pelos clientes ate saida do servidor apos PARAR; inclui IPC, CRUD, logs, coordenacao Python e encerramento; exclui lancamento inicial dos processos e leitura de validacao dos logs",
+    "saida_servidor": "stdout redirecionado para arquivo, servidor.log ativo com flush por resposta"
+  },
+  "aquecimentos": [],
+  "execucoes": []
+}

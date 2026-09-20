@@ -4,3 +4,6 @@
 *.fifo
 __pycache__/
 *.exe
+
+# Evidencias da rodada usada no relatorio atual
+!resultados/simulacao_20260920_114551/**/*.log

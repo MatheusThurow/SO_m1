@@ -1,6 +1,6 @@
 # Validacao da versao Windows
 
-Validacao realizada em 19/09/2026, no Windows, com MinGW GCC 6.3.0.
+Validacao realizada em 20/09/2026, no Windows, com MinGW GCC 6.3.0.
 
 ## Compilacao
 
@@ -23,7 +23,7 @@ como processos reais e usando o named pipe do Windows.
 Saida do teste:
 
 ```text
-OK: CRUD, validacao, concorrencia e encerramento com fila pendente.
+OK: respostas no cliente, CRUD, validacao, concorrencia e encerramento.
 ```
 
 O teste confirma a conclusao das mensagens enviadas antes de PARAR; nao mede
@@ -37,4 +37,6 @@ O servidor agora aceita um argumento opcional de 1 a 64 threads (padrao: quatro)
 A versao recompilada passou novamente pelo teste funcional e por 60 medicoes
 com pools de 1, 2, 4 e 8 threads. As 122.000 insercoes da rodada final foram
 verificadas sem perdas ou duplicacoes. Consulte
-../resultados/simulacao_20260919_213111/RESULTADOS.md para metodo, dados e limitacoes.
+../resultados/simulacao_20260920_114551/RESULTADOS.md para metodo, dados e limitacoes.
+
+Também foram verificadas respostas no cliente, comandos dependentes em sequência e 24 clientes com IDs distintos (até 12 simultâneos). A rodada utilizou cópia com nome do pipe isolado, conforme METODO.md. A compilação e os testes automatizados não substituem a avaliação visual do cabeçalho interativo.

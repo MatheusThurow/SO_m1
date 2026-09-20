@@ -1,17 +1,18 @@
 # Resultados das simulações
 
 A análise final está em
-[RESULTADOS.md](simulacao_20260919_213111/RESULTADOS.md).
+[RESULTADOS.md](simulacao_20260920_114551/RESULTADOS.md).
 
-- [Gráfico PNG](simulacao_20260919_213111/tempos.png).
-- [Gráfico SVG para edição e impressão](simulacao_20260919_213111/tempos.svg).
-- [Dados brutos](simulacao_20260919_213111/dados.json).
-- [Estatísticas calculadas](simulacao_20260919_213111/resumo.json).
-- [Saída do teste funcional](simulacao_20260919_213111/teste_funcional.txt).
+- [Gráfico PNG](simulacao_20260920_114551/tempos.png).
+- [Gráfico SVG para edição e impressão](simulacao_20260920_114551/tempos.svg).
+- [Dados brutos](simulacao_20260920_114551/dados.json).
+- [Estatísticas calculadas](simulacao_20260920_114551/resumo.json).
+- [Saída do teste funcional](simulacao_20260920_114551/teste_funcional.txt).
 
 Foram executadas 60 medições finais com 122.000 inserções, além de quatro
 aquecimentos, em Windows nativo. Todos os resultados foram verificados nos logs.
 
-A pasta simulacao_20260919_212959 é uma rodada preliminar excluída das estatísticas,
-pois coincidiu com a instalação da ferramenta de gráficos. A rodada válida é
-simulacao_20260919_213111. Nenhuma repetição dessa rodada final foi excluída.
+As pastas de 19/09 documentam versões anteriores e não entram nesta análise.
+A rodada de 20/09 usa retorno completo ao cliente. METODO.md documenta o canal
+isolado; fontes_medidos preserva os fontes efetivamente compilados e medidos.
+Nenhuma repetição da rodada atual foi excluída.

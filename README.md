@@ -75,7 +75,7 @@ verifica CRUD, entradas invalidas, disputa de 12 clientes pelo mesmo ID,
 conclusao de pedidos recebidos e falha de conexao com o servidor desligado.
 
 ## Arquivos
-
+ 
 Para repetir as simulacoes de desempenho (Python 3, sem servidor aberto):
 
 ```powershell
@@ -111,7 +111,7 @@ O cliente recebe e imprime o resultado completo pelo named pipe.
 Use PARAR para encerrar normalmente; fechamento forcado perde pedidos pendentes.
 
 As simulacoes foram executadas e analisadas. Consulte
-[resultados e graficos](resultados/simulacao_20260919_213111/RESULTADOS.md).
+[resultados e graficos](resultados/simulacao_20260920_114551/RESULTADOS.md).
 A rodada final teve 60 medicoes e 122.000 insercoes verificadas, sem erros.
 O relatorio editavel esta em [docs/Relatorio_M1.docx](docs/Relatorio_M1.docx), com copia em PDF. Preencha os campos de identificacao pendentes e o link do repositorio publico antes da entrega.
 
@@ -126,4 +126,4 @@ Digite cls ou CLS no cliente para limpar a tela. O banco e o servidor.log perman
 
 ## Atualizacao do retorno (20/09/2026)
 
-Cliente e servidor devem ser atualizados juntos. Veja [o complemento da documentacao](docs/ATUALIZACAO_RETORNO_CLIENTE.md). O Word/PDF e os resultados de 19/09 descrevem a versao anterior; nao sao medicoes da nova versao.
+Cliente e servidor devem ser atualizados juntos. Veja [o complemento da documentacao](docs/ATUALIZACAO_RETORNO_CLIENTE.md). O Word/PDF foi atualizado com as medicoes de 20/09. Resultados de 19/09 sao historicos e nao entram na analise atual.

@@ -1,0 +1,1 @@
+OK: respostas no cliente, CRUD, validacao, concorrencia e encerramento.

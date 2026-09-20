@@ -50,7 +50,7 @@ for eixo, n, cor in zip(eixos, volumes, cores):
     eixo.set_ylabel("Tempo total (ms)")
     eixo.set_ylim(bottom=0)
     eixo.grid(axis="y", alpha=.18)
-fig.suptitle("Mais threads não reduziram os tempos de forma consistente", fontsize=15, fontweight="bold", y=.98)
+fig.suptitle("Tempos medidos por volume e tamanho do pool", fontsize=15, fontweight="bold", y=.98)
 fig.text(.5, .035, "4 clientes · 5 repetições por cenário · pontos = execuções · linha = mediana · barras = mínimo–máximo\nEscalas verticais independentes. Tempo inclui IPC, logs e encerramento; menor é melhor.",
          ha="center", fontsize=10, color="#475569")
 fig.tight_layout(rect=[0, .14, 1, .91])
@@ -95,7 +95,7 @@ perdidas, duplicadas ou com resposta inesperada**. Quatro aquecimentos adicionai
 
 Para 5.000 inserções, a mediana foi **{br(maior[1]['mediana_s'])} s com uma thread**
 e **{br(maior[4]['mediana_s'])} s com quatro threads**. O tempo com quatro threads
-foi {br(aumento,1)}% maior nessa amostra. Não foi observado ganho consistente
+variou {br(aumento,1)}% em relação a uma thread nessa amostra (valor negativo indica redução). Não foi observado ganho consistente
 de desempenho ao ampliar o pool nesta carga e nesta máquina.
 
 ## Ambiente de execução
@@ -120,8 +120,9 @@ Cada execução iniciou um servidor novo e, portanto, um banco vazio. Os IDs for
 distintos, de 0 a N−1, distribuídos entre os quatro clientes. O tamanho do lote é
 o total entre os clientes, não a quantidade enviada por cada cliente. Não foram
 inseridos atrasos artificiais nem alterada a lógica do banco para favorecer threads.
-A única mudança no programa foi permitir escolher o tamanho do pool por argumento;
-a execução sem argumento continua usando quatro threads.
+A execução sem argumento usa quatro threads. Cada cliente espera a resposta
+completa de uma operação antes de enviar a seguinte. Consulte METODO.md, quando
+presente, para as condições específicas e a proveniência da rodada.
 
 O cronômetro `time.perf_counter()` começou antes de despachar os envios e parou
 após o servidor sair em resposta a PARAR. Assim, mede **tempo total do lote**,
@@ -135,10 +136,9 @@ O log do servidor permaneceu ativo, com flush por resposta. A saída de console
 do servidor foi redirecionada para outro arquivo; a saída normal do cliente foi
 descartada. Rodar com terminais visíveis pode produzir tempos diferentes.
 
-Uma rodada preliminar ocorreu enquanto se instalava a biblioteca de gráficos.
-Ela foi preservada, mas **não entrou em nenhuma estatística abaixo**. A rodada
-final começou depois que essa instalação terminou. O computador não foi isolado
-de toda atividade de fundo do Windows.
+Somente as 60 medições do arquivo indicado entraram nas estatísticas abaixo.
+Rodadas de outras versões são históricas e não foram combinadas com esta.
+O computador não foi isolado de toda atividade de fundo do Windows.
 
 ## Tabela de resultados
 
@@ -164,6 +164,8 @@ os clientes e do servidor. Todos os lotes foram aprovados.
 
 Separadamente, `testes/testar.py` validou INSERT, SELECT, UPDATE e DELETE, entradas
 inválidas, consulta de registro inexistente, rejeição de duplicatas e encerramento.
+Também verificou as respostas no cliente, uma sequência dependente e 24 clientes
+lógicos concorrentes com IDs distintos, usando até 12 processos de cada vez.
 Na disputa de 12 clientes pelo mesmo ID, houve uma inserção aceita e 11 rejeitadas.
 Esses resultados estão em `teste_funcional.txt`. **Os tempos da tabela são apenas
 de INSERT; não são benchmarks de SELECT, UPDATE ou DELETE.**
@@ -176,15 +178,16 @@ execução simultânea dentro do banco. A seção crítica do banco é exclusiva
 ## Análise e discussão
 
 O aumento do pool não reduziu os tempos de maneira consistente. No maior lote,
-uma thread apresentou a menor mediana entre as configurações avaliadas. Nos lotes
+a configuração com {min(maior, key=lambda t: maior[t]['mediana_s'])} threads apresentou a menor mediana entre as avaliadas. Nos lotes
 menores, a variação entre repetições é grande em relação às diferenças entre
 configurações; pequenas vantagens isoladas não sustentam uma conclusão geral.
 
 A arquitetura ajuda a explicar o resultado: INSERT precisa adquirir um mutex
 único, e a busca de ID no vetor também ocorre dentro dessa seção crítica. Logo,
 as operações sobre o banco ficam serializadas. Além disso, cada comando abre uma
-conexão no named pipe, o servidor recebe uma conexão de cada vez e as respostas
-passam por um log sincronizado com flush. Acrescentar threads adiciona coordenação
+conexão no named pipe; a recepção é sequencial, mas cada pedido mantém sua
+conexão até a thread devolver o resultado. As respostas também passam por um log
+sincronizado com flush. Acrescentar threads adiciona coordenação
 sem remover essas etapas serializadas. São explicações compatíveis com o código;
 o experimento não mediu separadamente o custo de cada etapa.
 

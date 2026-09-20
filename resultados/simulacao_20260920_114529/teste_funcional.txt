@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "C:\faculdade\SO\m1\projeto_m1\projeto_m1\testes\testar.py", line 40, in <module>
+    esperar(lambda: "SERVIDOR PRONTO" in log())
+  File "C:\faculdade\SO\m1\projeto_m1\projeto_m1\testes\testar.py", line 21, in esperar
+    raise AssertionError("Servidor encerrou inesperadamente")
+AssertionError: Servidor encerrou inesperadamente

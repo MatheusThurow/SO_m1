@@ -3,7 +3,7 @@
 Este guia descreve a versão **Windows nativa** do projeto. Use-o junto com os
 fontes: a ideia é conseguir explicar por que cada parte existe, não decorar frases.
 
-> Atualização de 20/09/2026: respostas agora voltam ao cliente. O relatório Word/PDF e as simulações de 19/09 documentam a versão anterior, com confirmação de recebimento e resultados no log. Seus tempos não representam esta versão; consulte `docs/ATUALIZACAO_RETORNO_CLIENTE.md`.
+> Versão atual: respostas no cliente e no log, CLS e cabeçalho fixo. O relatório Word/PDF usa as medições de 20/09/2026. Consulte `resultados/simulacao_20260920_114551/METODO.md` para as condições da execução.
 
 ## 1. O que o sistema faz
 
@@ -365,22 +365,22 @@ já entregues podem ser consultados sem instalar matplotlib nem repetir as medi�
 
 ### Como explicar os resultados já obtidos
 
-A rodada usada no relatório é `simulacao_20260919_213111`. Na carga de 5.000 inserções:
+A rodada usada no relatório é `simulacao_20260920_114551`. Na carga de 5.000 inserções:
 
 | Threads | Mediana do lote |
 |---:|---:|
-| 1 | 0,2620 s |
-| 2 | 0,2928 s |
-| 4 | 0,3037 s |
-| 8 | 0,2968 s |
+| 1 | 0,3365 s |
+| 2 | 0,3330 s |
+| 4 | 0,2731 s |
+| 8 | 0,3683 s |
 
 **Não houve ganho consistente ao acrescentar threads.** O mutex permite apenas
 uma operação por vez no banco; a recepção é serial e a escrita dos logs também
 tem sincronização. Esses fatores são compatíveis com os resultados, mas não
 foram medidos separadamente.
 
-Quatro threads tiveram tempo mediano aproximadamente 15,9% maior que uma thread
-nesse lote. Isso não significa que threads sejam sempre mais lentas: a conclusão
+Quatro threads tiveram tempo mediano aproximadamente 18,9% menor que uma thread
+nesse lote. Isso não significa que threads sejam sempre mais rápidas: a conclusão
 vale para esta implementação, esta carga e esta máquina. Os ensaios foram curtos,
 com cinco repetições, sujeitos à variação do Windows.
 
@@ -487,3 +487,4 @@ Digite **cls** ou **CLS** e pressione Enter para limpar o terminal do cliente. E
 No terminal interativo do Windows, as instrucoes ficam nas seis primeiras linhas e os comandos/resultados rolam abaixo. CLS limpa a area de uso e redesenha as instrucoes. Use uma janela de pelo menos 40 colunas e 12 linhas. Ao redimensionar, a tela e reorganizada no proximo comando. Em testes com saida redirecionada, a saida permanece texto simples.
 
 Referencia da API de terminal: https://learn.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences#scrolling-margins
+

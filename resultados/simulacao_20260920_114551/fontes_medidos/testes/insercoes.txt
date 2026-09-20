@@ -1,0 +1,4 @@
+INSERT 1 Ana Silva
+INSERT 2 Bruno
+INSERT 3 Carla
+INSERT 4 Diego
