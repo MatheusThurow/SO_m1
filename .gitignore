@@ -1,0 +1,6 @@
+/cliente
+/servidor
+*.log
+*.fifo
+__pycache__/
+*.exe

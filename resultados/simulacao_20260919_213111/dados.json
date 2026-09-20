@@ -1,0 +1,1236 @@
+{
+  "ambiente": {
+    "data": "2026-09-19T21:31:11.074935-03:00",
+    "sistema": "Windows-11-10.0.26200-SP0",
+    "processador": "Intel64 Family 6 Model 151 Stepping 2, GenuineIntel",
+    "processadores_logicos": 12,
+    "python": "3.12.14",
+    "compilador": "g++ (MinGW.org GCC-6.3.0-1) 6.3.0",
+    "flags": "-std=c++11 -Wall -Wextra -Wpedantic -Iinclude -static (sem -O)",
+    "hashes_sha256": {
+      "src\\banco.cpp": "c77f26ecf16568fad7f66f82c3154a559a3f6d5f99a83b684172b9c89c773b4d",
+      "src\\cliente.cpp": "efa45c0014b866082391069e46302434d9990384c6a3178d1e51f9c19dc43504",
+      "src\\ipc.cpp": "d31efda65c4c068e6de5642c238802f6e71aa1720a770c12da0088b290a23217",
+      "src\\servidor.cpp": "36daeb0705ef8981ee312d9c6588f6ba54eb3f38ea59008b6468d2bedf05dbc4",
+      "include\\sistema.hpp": "c29ab5f2312090f62fe219f26c62448b3670637e7f728fab8d3362ac6de0b055",
+      "cliente.exe": "57d111e0b1f216f250e28b9737ee4d2beac0450f51a6f0ed18024e89812eb9e9",
+      "servidor.exe": "2c90a3c07a997c8c3ff8f263940d1ac41084087e6664bacee59ce1046cb7e7b8",
+      "testes\\simular.py": "0ae6e5ef7000f266ffcafa59b25ce1789d914fda474bbfc6f29f18ed650aeb5d"
+    }
+  },
+  "metodo": {
+    "threads": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "volumes": [
+      100,
+      1000,
+      5000
+    ],
+    "clientes": 4,
+    "repeticoes": 5,
+    "semente": 20260919,
+    "carga": "INSERT com IDs distintos; banco vazio a cada execucao",
+    "tempo": "Envio pelos clientes ate saida do servidor apos PARAR; inclui IPC, CRUD, logs, coordenacao Python e encerramento; exclui lancamento inicial dos processos e leitura de validacao dos logs",
+    "saida_servidor": "stdout redirecionado para arquivo, servidor.log ativo com flush por resposta"
+  },
+  "aquecimentos": [
+    {
+      "threads": 1,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.10699929995462298,
+      "requisicoes_por_segundo": 9345.855537597788,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 1000
+      },
+      "evidencia": "aquecimento_t1",
+      "status": "aprovado"
+    },
+    {
+      "threads": 2,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.08551830006763339,
+      "requisicoes_por_segundo": 11693.403624828083,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 500,
+        "2": 500
+      },
+      "evidencia": "aquecimento_t2",
+      "status": "aprovado"
+    },
+    {
+      "threads": 4,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.08789500000420958,
+      "requisicoes_por_segundo": 11377.211444929822,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 250,
+        "2": 250,
+        "3": 251,
+        "4": 249
+      },
+      "evidencia": "aquecimento_t4",
+      "status": "aprovado"
+    },
+    {
+      "threads": 8,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.07921989995520562,
+      "requisicoes_por_segundo": 12623.090922425345,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 125,
+        "2": 125,
+        "3": 125,
+        "4": 125,
+        "5": 125,
+        "6": 125,
+        "7": 125,
+        "8": 125
+      },
+      "evidencia": "aquecimento_t8",
+      "status": "aprovado"
+    }
+  ],
+  "execucoes": [
+    {
+      "threads": 8,
+      "requisicoes": 5000,
+      "clientes": 4,
+      "segundos": 0.2606560999993235,
+      "requisicoes_por_segundo": 19182.36327487819,
+      "corretas": 5000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 625,
+        "2": 626,
+        "3": 625,
+        "4": 625,
+        "5": 626,
+        "6": 624,
+        "7": 624,
+        "8": 625
+      },
+      "evidencia": "exec_01_t8_n5000_r3",
+      "status": "aprovado",
+      "ordem": 1,
+      "repeticao": 3
+    },
+    {
+      "threads": 4,
+      "requisicoes": 100,
+      "clientes": 4,
+      "segundos": 0.04972100001759827,
+      "requisicoes_por_segundo": 2011.222621520202,
+      "corretas": 100,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 25,
+        "2": 25,
+        "3": 25,
+        "4": 25
+      },
+      "evidencia": "exec_02_t4_n100_r3",
+      "status": "aprovado",
+      "ordem": 2,
+      "repeticao": 3
+    },
+    {
+      "threads": 2,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.08013609994668514,
+      "requisicoes_por_segundo": 12478.77050000317,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 500,
+        "2": 500
+      },
+      "evidencia": "exec_03_t2_n1000_r4",
+      "status": "aprovado",
+      "ordem": 3,
+      "repeticao": 4
+    },
+    {
+      "threads": 1,
+      "requisicoes": 5000,
+      "clientes": 4,
+      "segundos": 0.25139480002690107,
+      "requisicoes_por_segundo": 19889.035093267496,
+      "corretas": 5000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 5000
+      },
+      "evidencia": "exec_04_t1_n5000_r3",
+      "status": "aprovado",
+      "ordem": 4,
+      "repeticao": 3
+    },
+    {
+      "threads": 2,
+      "requisicoes": 100,
+      "clientes": 4,
+      "segundos": 0.04949030000716448,
+      "requisicoes_por_segundo": 2020.5979754724353,
+      "corretas": 100,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 50,
+        "2": 50
+      },
+      "evidencia": "exec_05_t2_n100_r2",
+      "status": "aprovado",
+      "ordem": 5,
+      "repeticao": 2
+    },
+    {
+      "threads": 4,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.0720366999739781,
+      "requisicoes_por_segundo": 13881.813025322248,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 250,
+        "2": 250,
+        "3": 250,
+        "4": 250
+      },
+      "evidencia": "exec_06_t4_n1000_r5",
+      "status": "aprovado",
+      "ordem": 6,
+      "repeticao": 5
+    },
+    {
+      "threads": 1,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.07241330004762858,
+      "requisicoes_por_segundo": 13809.6178373623,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 1000
+      },
+      "evidencia": "exec_07_t1_n1000_r5",
+      "status": "aprovado",
+      "ordem": 7,
+      "repeticao": 5
+    },
+    {
+      "threads": 4,
+      "requisicoes": 5000,
+      "clientes": 4,
+      "segundos": 0.3036570999538526,
+      "requisicoes_por_segundo": 16465.941355429728,
+      "corretas": 5000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 1250,
+        "2": 1250,
+        "3": 1248,
+        "4": 1252
+      },
+      "evidencia": "exec_08_t4_n5000_r4",
+      "status": "aprovado",
+      "ordem": 8,
+      "repeticao": 4
+    },
+    {
+      "threads": 4,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.10121049999725074,
+      "requisicoes_por_segundo": 9880.397785083205,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 251,
+        "2": 248,
+        "3": 250,
+        "4": 251
+      },
+      "evidencia": "exec_09_t4_n1000_r2",
+      "status": "aprovado",
+      "ordem": 9,
+      "repeticao": 2
+    },
+    {
+      "threads": 2,
+      "requisicoes": 5000,
+      "clientes": 4,
+      "segundos": 0.27170419995673,
+      "requisicoes_por_segundo": 18402.36551660324,
+      "corretas": 5000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 2489,
+        "2": 2511
+      },
+      "evidencia": "exec_10_t2_n5000_r5",
+      "status": "aprovado",
+      "ordem": 10,
+      "repeticao": 5
+    },
+    {
+      "threads": 1,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.10458220005966723,
+      "requisicoes_por_segundo": 9561.856601118265,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 1000
+      },
+      "evidencia": "exec_11_t1_n1000_r3",
+      "status": "aprovado",
+      "ordem": 11,
+      "repeticao": 3
+    },
+    {
+      "threads": 1,
+      "requisicoes": 5000,
+      "clientes": 4,
+      "segundos": 0.24711359990760684,
+      "requisicoes_por_segundo": 20233.609165458507,
+      "corretas": 5000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 5000
+      },
+      "evidencia": "exec_12_t1_n5000_r2",
+      "status": "aprovado",
+      "ordem": 12,
+      "repeticao": 2
+    },
+    {
+      "threads": 4,
+      "requisicoes": 100,
+      "clientes": 4,
+      "segundos": 0.05284260003827512,
+      "requisicoes_por_segundo": 1892.4125597068971,
+      "corretas": 100,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 25,
+        "2": 25,
+        "3": 25,
+        "4": 25
+      },
+      "evidencia": "exec_13_t4_n100_r4",
+      "status": "aprovado",
+      "ordem": 13,
+      "repeticao": 4
+    },
+    {
+      "threads": 1,
+      "requisicoes": 5000,
+      "clientes": 4,
+      "segundos": 0.2903946000151336,
+      "requisicoes_por_segundo": 17217.951021607943,
+      "corretas": 5000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 5000
+      },
+      "evidencia": "exec_14_t1_n5000_r4",
+      "status": "aprovado",
+      "ordem": 14,
+      "repeticao": 4
+    },
+    {
+      "threads": 2,
+      "requisicoes": 100,
+      "clientes": 4,
+      "segundos": 0.020687000011093915,
+      "requisicoes_por_segundo": 4833.953688131316,
+      "corretas": 100,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 50,
+        "2": 50
+      },
+      "evidencia": "exec_15_t2_n100_r5",
+      "status": "aprovado",
+      "ordem": 15,
+      "repeticao": 5
+    },
+    {
+      "threads": 4,
+      "requisicoes": 100,
+      "clientes": 4,
+      "segundos": 0.022095500025898218,
+      "requisicoes_por_segundo": 4525.808417224757,
+      "corretas": 100,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 25,
+        "2": 25,
+        "3": 25,
+        "4": 25
+      },
+      "evidencia": "exec_16_t4_n100_r1",
+      "status": "aprovado",
+      "ordem": 16,
+      "repeticao": 1
+    },
+    {
+      "threads": 8,
+      "requisicoes": 5000,
+      "clientes": 4,
+      "segundos": 0.28580429998692125,
+      "requisicoes_por_segundo": 17494.488362242297,
+      "corretas": 5000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 625,
+        "2": 625,
+        "3": 625,
+        "4": 625,
+        "5": 625,
+        "6": 625,
+        "7": 625,
+        "8": 625
+      },
+      "evidencia": "exec_17_t8_n5000_r4",
+      "status": "aprovado",
+      "ordem": 17,
+      "repeticao": 4
+    },
+    {
+      "threads": 2,
+      "requisicoes": 100,
+      "clientes": 4,
+      "segundos": 0.04995179991237819,
+      "requisicoes_por_segundo": 2001.929863897051,
+      "corretas": 100,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 50,
+        "2": 50
+      },
+      "evidencia": "exec_18_t2_n100_r4",
+      "status": "aprovado",
+      "ordem": 18,
+      "repeticao": 4
+    },
+    {
+      "threads": 8,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.1063541000476107,
+      "requisicoes_por_segundo": 9402.55241266992,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 126,
+        "2": 125,
+        "3": 125,
+        "4": 125,
+        "5": 125,
+        "6": 125,
+        "7": 125,
+        "8": 124
+      },
+      "evidencia": "exec_19_t8_n1000_r3",
+      "status": "aprovado",
+      "ordem": 19,
+      "repeticao": 3
+    },
+    {
+      "threads": 8,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.06689189991448075,
+      "requisicoes_por_segundo": 14949.493156547647,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 125,
+        "2": 125,
+        "3": 125,
+        "4": 125,
+        "5": 125,
+        "6": 125,
+        "7": 125,
+        "8": 125
+      },
+      "evidencia": "exec_20_t8_n1000_r4",
+      "status": "aprovado",
+      "ordem": 20,
+      "repeticao": 4
+    },
+    {
+      "threads": 8,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.05433179996907711,
+      "requisicoes_por_segundo": 18405.427402904912,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 125,
+        "2": 125,
+        "3": 125,
+        "4": 124,
+        "5": 125,
+        "6": 126,
+        "7": 125,
+        "8": 125
+      },
+      "evidencia": "exec_21_t8_n1000_r5",
+      "status": "aprovado",
+      "ordem": 21,
+      "repeticao": 5
+    },
+    {
+      "threads": 8,
+      "requisicoes": 100,
+      "clientes": 4,
+      "segundos": 0.04869750002399087,
+      "requisicoes_por_segundo": 2053.4935048151324,
+      "corretas": 100,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 13,
+        "2": 13,
+        "3": 12,
+        "4": 12,
+        "5": 13,
+        "6": 12,
+        "7": 13,
+        "8": 12
+      },
+      "evidencia": "exec_22_t8_n100_r1",
+      "status": "aprovado",
+      "ordem": 22,
+      "repeticao": 1
+    },
+    {
+      "threads": 2,
+      "requisicoes": 100,
+      "clientes": 4,
+      "segundos": 0.014633200014941394,
+      "requisicoes_por_segundo": 6833.775243821849,
+      "corretas": 100,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 50,
+        "2": 50
+      },
+      "evidencia": "exec_23_t2_n100_r1",
+      "status": "aprovado",
+      "ordem": 23,
+      "repeticao": 1
+    },
+    {
+      "threads": 1,
+      "requisicoes": 5000,
+      "clientes": 4,
+      "segundos": 0.2705704999389127,
+      "requisicoes_por_segundo": 18479.472082613815,
+      "corretas": 5000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 5000
+      },
+      "evidencia": "exec_24_t1_n5000_r1",
+      "status": "aprovado",
+      "ordem": 24,
+      "repeticao": 1
+    },
+    {
+      "threads": 4,
+      "requisicoes": 5000,
+      "clientes": 4,
+      "segundos": 0.3111270999070257,
+      "requisicoes_por_segundo": 16070.602662044397,
+      "corretas": 5000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 1246,
+        "2": 1252,
+        "3": 1250,
+        "4": 1252
+      },
+      "evidencia": "exec_25_t4_n5000_r5",
+      "status": "aprovado",
+      "ordem": 25,
+      "repeticao": 5
+    },
+    {
+      "threads": 8,
+      "requisicoes": 5000,
+      "clientes": 4,
+      "segundos": 0.33233459992334247,
+      "requisicoes_por_segundo": 15045.07806636239,
+      "corretas": 5000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 626,
+        "2": 625,
+        "3": 625,
+        "4": 623,
+        "5": 626,
+        "6": 625,
+        "7": 625,
+        "8": 625
+      },
+      "evidencia": "exec_26_t8_n5000_r2",
+      "status": "aprovado",
+      "ordem": 26,
+      "repeticao": 2
+    },
+    {
+      "threads": 4,
+      "requisicoes": 5000,
+      "clientes": 4,
+      "segundos": 0.3103832999477163,
+      "requisicoes_por_segundo": 16109.114120644519,
+      "corretas": 5000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 1250,
+        "2": 1252,
+        "3": 1248,
+        "4": 1250
+      },
+      "evidencia": "exec_27_t4_n5000_r3",
+      "status": "aprovado",
+      "ordem": 27,
+      "repeticao": 3
+    },
+    {
+      "threads": 2,
+      "requisicoes": 5000,
+      "clientes": 4,
+      "segundos": 0.293428200064227,
+      "requisicoes_por_segundo": 17039.94366903241,
+      "corretas": 5000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 2495,
+        "2": 2505
+      },
+      "evidencia": "exec_28_t2_n5000_r4",
+      "status": "aprovado",
+      "ordem": 28,
+      "repeticao": 4
+    },
+    {
+      "threads": 8,
+      "requisicoes": 100,
+      "clientes": 4,
+      "segundos": 0.04561049991752952,
+      "requisicoes_por_segundo": 2192.477613286736,
+      "corretas": 100,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 13,
+        "2": 13,
+        "3": 13,
+        "4": 13,
+        "5": 12,
+        "6": 12,
+        "7": 12,
+        "8": 12
+      },
+      "evidencia": "exec_29_t8_n100_r4",
+      "status": "aprovado",
+      "ordem": 29,
+      "repeticao": 4
+    },
+    {
+      "threads": 2,
+      "requisicoes": 5000,
+      "clientes": 4,
+      "segundos": 0.2928192000836134,
+      "requisicoes_por_segundo": 17075.38303011643,
+      "corretas": 5000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 2495,
+        "2": 2505
+      },
+      "evidencia": "exec_30_t2_n5000_r2",
+      "status": "aprovado",
+      "ordem": 30,
+      "repeticao": 2
+    },
+    {
+      "threads": 8,
+      "requisicoes": 5000,
+      "clientes": 4,
+      "segundos": 0.296838799957186,
+      "requisicoes_por_segundo": 16844.15918916653,
+      "corretas": 5000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 625,
+        "2": 625,
+        "3": 626,
+        "4": 624,
+        "5": 625,
+        "6": 625,
+        "7": 625,
+        "8": 625
+      },
+      "evidencia": "exec_31_t8_n5000_r1",
+      "status": "aprovado",
+      "ordem": 31,
+      "repeticao": 1
+    },
+    {
+      "threads": 4,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.053374200011603534,
+      "requisicoes_por_segundo": 18735.64380885522,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 249,
+        "2": 251,
+        "3": 250,
+        "4": 250
+      },
+      "evidencia": "exec_32_t4_n1000_r4",
+      "status": "aprovado",
+      "ordem": 32,
+      "repeticao": 4
+    },
+    {
+      "threads": 1,
+      "requisicoes": 5000,
+      "clientes": 4,
+      "segundos": 0.26203019998501986,
+      "requisicoes_por_segundo": 19081.769965011084,
+      "corretas": 5000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 5000
+      },
+      "evidencia": "exec_33_t1_n5000_r5",
+      "status": "aprovado",
+      "ordem": 33,
+      "repeticao": 5
+    },
+    {
+      "threads": 4,
+      "requisicoes": 100,
+      "clientes": 4,
+      "segundos": 0.021759600029326975,
+      "requisicoes_por_segundo": 4595.672708378041,
+      "corretas": 100,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 25,
+        "2": 25,
+        "3": 25,
+        "4": 25
+      },
+      "evidencia": "exec_34_t4_n100_r2",
+      "status": "aprovado",
+      "ordem": 34,
+      "repeticao": 2
+    },
+    {
+      "threads": 1,
+      "requisicoes": 100,
+      "clientes": 4,
+      "segundos": 0.02240800007712096,
+      "requisicoes_por_segundo": 4462.691880392401,
+      "corretas": 100,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 100
+      },
+      "evidencia": "exec_35_t1_n100_r3",
+      "status": "aprovado",
+      "ordem": 35,
+      "repeticao": 3
+    },
+    {
+      "threads": 1,
+      "requisicoes": 100,
+      "clientes": 4,
+      "segundos": 0.017100999946705997,
+      "requisicoes_por_segundo": 5847.611269027695,
+      "corretas": 100,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 100
+      },
+      "evidencia": "exec_36_t1_n100_r1",
+      "status": "aprovado",
+      "ordem": 36,
+      "repeticao": 1
+    },
+    {
+      "threads": 2,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.052294000051915646,
+      "requisicoes_por_segundo": 19122.65267539747,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 500,
+        "2": 500
+      },
+      "evidencia": "exec_37_t2_n1000_r5",
+      "status": "aprovado",
+      "ordem": 37,
+      "repeticao": 5
+    },
+    {
+      "threads": 8,
+      "requisicoes": 5000,
+      "clientes": 4,
+      "segundos": 0.2969958999892697,
+      "requisicoes_por_segundo": 16835.249241422684,
+      "corretas": 5000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 624,
+        "2": 625,
+        "3": 625,
+        "4": 626,
+        "5": 625,
+        "6": 625,
+        "7": 625,
+        "8": 625
+      },
+      "evidencia": "exec_38_t8_n5000_r5",
+      "status": "aprovado",
+      "ordem": 38,
+      "repeticao": 5
+    },
+    {
+      "threads": 4,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.05344099993817508,
+      "requisicoes_por_segundo": 18712.224718041987,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 249,
+        "2": 251,
+        "3": 251,
+        "4": 249
+      },
+      "evidencia": "exec_39_t4_n1000_r3",
+      "status": "aprovado",
+      "ordem": 39,
+      "repeticao": 3
+    },
+    {
+      "threads": 2,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.05529819999355823,
+      "requisicoes_por_segundo": 18083.77126410067,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 500,
+        "2": 500
+      },
+      "evidencia": "exec_40_t2_n1000_r1",
+      "status": "aprovado",
+      "ordem": 40,
+      "repeticao": 1
+    },
+    {
+      "threads": 1,
+      "requisicoes": 100,
+      "clientes": 4,
+      "segundos": 0.014925899915397167,
+      "requisicoes_por_segundo": 6699.763536324039,
+      "corretas": 100,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 100
+      },
+      "evidencia": "exec_41_t1_n100_r2",
+      "status": "aprovado",
+      "ordem": 41,
+      "repeticao": 2
+    },
+    {
+      "threads": 4,
+      "requisicoes": 100,
+      "clientes": 4,
+      "segundos": 0.014093599980697036,
+      "requisicoes_por_segundo": 7095.419207084253,
+      "corretas": 100,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 25,
+        "2": 25,
+        "3": 25,
+        "4": 25
+      },
+      "evidencia": "exec_42_t4_n100_r5",
+      "status": "aprovado",
+      "ordem": 42,
+      "repeticao": 5
+    },
+    {
+      "threads": 1,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.05093070003204048,
+      "requisicoes_por_segundo": 19634.522976729175,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 1000
+      },
+      "evidencia": "exec_43_t1_n1000_r1",
+      "status": "aprovado",
+      "ordem": 43,
+      "repeticao": 1
+    },
+    {
+      "threads": 2,
+      "requisicoes": 5000,
+      "clientes": 4,
+      "segundos": 0.25943109998479486,
+      "requisicoes_por_segundo": 19272.939906946576,
+      "corretas": 5000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 2497,
+        "2": 2503
+      },
+      "evidencia": "exec_44_t2_n5000_r3",
+      "status": "aprovado",
+      "ordem": 44,
+      "repeticao": 3
+    },
+    {
+      "threads": 1,
+      "requisicoes": 100,
+      "clientes": 4,
+      "segundos": 0.020357699948363006,
+      "requisicoes_por_segundo": 4912.146276526742,
+      "corretas": 100,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 100
+      },
+      "evidencia": "exec_45_t1_n100_r5",
+      "status": "aprovado",
+      "ordem": 45,
+      "repeticao": 5
+    },
+    {
+      "threads": 1,
+      "requisicoes": 100,
+      "clientes": 4,
+      "segundos": 0.036541700013913214,
+      "requisicoes_por_segundo": 2736.5995550815946,
+      "corretas": 100,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 100
+      },
+      "evidencia": "exec_46_t1_n100_r4",
+      "status": "aprovado",
+      "ordem": 46,
+      "repeticao": 4
+    },
+    {
+      "threads": 2,
+      "requisicoes": 100,
+      "clientes": 4,
+      "segundos": 0.02024019998498261,
+      "requisicoes_por_segundo": 4940.662645339268,
+      "corretas": 100,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 51,
+        "2": 49
+      },
+      "evidencia": "exec_47_t2_n100_r3",
+      "status": "aprovado",
+      "ordem": 47,
+      "repeticao": 3
+    },
+    {
+      "threads": 4,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.10585039993748069,
+      "requisicoes_por_segundo": 9447.295433844733,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 250,
+        "2": 250,
+        "3": 251,
+        "4": 249
+      },
+      "evidencia": "exec_48_t4_n1000_r1",
+      "status": "aprovado",
+      "ordem": 48,
+      "repeticao": 1
+    },
+    {
+      "threads": 8,
+      "requisicoes": 100,
+      "clientes": 4,
+      "segundos": 0.020748800016008317,
+      "requisicoes_por_segundo": 4819.555826016301,
+      "corretas": 100,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 13,
+        "2": 12,
+        "3": 13,
+        "4": 13,
+        "5": 12,
+        "6": 13,
+        "7": 12,
+        "8": 12
+      },
+      "evidencia": "exec_49_t8_n100_r2",
+      "status": "aprovado",
+      "ordem": 49,
+      "repeticao": 2
+    },
+    {
+      "threads": 2,
+      "requisicoes": 5000,
+      "clientes": 4,
+      "segundos": 0.30374220001976937,
+      "requisicoes_por_segundo": 16461.328059369327,
+      "corretas": 5000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 2497,
+        "2": 2503
+      },
+      "evidencia": "exec_50_t2_n5000_r1",
+      "status": "aprovado",
+      "ordem": 50,
+      "repeticao": 1
+    },
+    {
+      "threads": 2,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.04985020007006824,
+      "requisicoes_por_segundo": 20060.100031583104,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 498,
+        "2": 502
+      },
+      "evidencia": "exec_51_t2_n1000_r2",
+      "status": "aprovado",
+      "ordem": 51,
+      "repeticao": 2
+    },
+    {
+      "threads": 8,
+      "requisicoes": 100,
+      "clientes": 4,
+      "segundos": 0.019374100025743246,
+      "requisicoes_por_segundo": 5161.530077119735,
+      "corretas": 100,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 13,
+        "2": 13,
+        "3": 13,
+        "4": 13,
+        "5": 12,
+        "6": 12,
+        "7": 12,
+        "8": 12
+      },
+      "evidencia": "exec_52_t8_n100_r5",
+      "status": "aprovado",
+      "ordem": 52,
+      "repeticao": 5
+    },
+    {
+      "threads": 8,
+      "requisicoes": 100,
+      "clientes": 4,
+      "segundos": 0.018384700058959424,
+      "requisicoes_por_segundo": 5439.305492028789,
+      "corretas": 100,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 13,
+        "2": 12,
+        "3": 12,
+        "4": 13,
+        "5": 12,
+        "6": 12,
+        "7": 13,
+        "8": 13
+      },
+      "evidencia": "exec_53_t8_n100_r3",
+      "status": "aprovado",
+      "ordem": 53,
+      "repeticao": 3
+    },
+    {
+      "threads": 4,
+      "requisicoes": 5000,
+      "clientes": 4,
+      "segundos": 0.2658752000425011,
+      "requisicoes_por_segundo": 18805.81565787532,
+      "corretas": 5000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 1248,
+        "2": 1250,
+        "3": 1251,
+        "4": 1251
+      },
+      "evidencia": "exec_54_t4_n5000_r2",
+      "status": "aprovado",
+      "ordem": 54,
+      "repeticao": 2
+    },
+    {
+      "threads": 8,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.07297830004245043,
+      "requisicoes_por_segundo": 13702.703398384374,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 125,
+        "2": 125,
+        "3": 125,
+        "4": 125,
+        "5": 125,
+        "6": 125,
+        "7": 125,
+        "8": 125
+      },
+      "evidencia": "exec_55_t8_n1000_r1",
+      "status": "aprovado",
+      "ordem": 55,
+      "repeticao": 1
+    },
+    {
+      "threads": 1,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.057538599940016866,
+      "requisicoes_por_segundo": 17379.637339846384,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 1000
+      },
+      "evidencia": "exec_56_t1_n1000_r4",
+      "status": "aprovado",
+      "ordem": 56,
+      "repeticao": 4
+    },
+    {
+      "threads": 2,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.05407419998664409,
+      "requisicoes_por_segundo": 18493.107623358133,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 499,
+        "2": 501
+      },
+      "evidencia": "exec_57_t2_n1000_r3",
+      "status": "aprovado",
+      "ordem": 57,
+      "repeticao": 3
+    },
+    {
+      "threads": 8,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.06710780004505068,
+      "requisicoes_por_segundo": 14901.39744304957,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 126,
+        "2": 125,
+        "3": 125,
+        "4": 124,
+        "5": 125,
+        "6": 125,
+        "7": 125,
+        "8": 125
+      },
+      "evidencia": "exec_58_t8_n1000_r2",
+      "status": "aprovado",
+      "ordem": 58,
+      "repeticao": 2
+    },
+    {
+      "threads": 1,
+      "requisicoes": 1000,
+      "clientes": 4,
+      "segundos": 0.049807799980044365,
+      "requisicoes_por_segundo": 20077.176675152343,
+      "corretas": 1000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 1000
+      },
+      "evidencia": "exec_59_t1_n1000_r2",
+      "status": "aprovado",
+      "ordem": 59,
+      "repeticao": 2
+    },
+    {
+      "threads": 4,
+      "requisicoes": 5000,
+      "clientes": 4,
+      "segundos": 0.26806660008151084,
+      "requisicoes_por_segundo": 18652.08123085701,
+      "corretas": 5000,
+      "erros": 0,
+      "distribuicao_threads": {
+        "1": 1250,
+        "2": 1251,
+        "3": 1250,
+        "4": 1249
+      },
+      "evidencia": "exec_60_t4_n5000_r1",
+      "status": "aprovado",
+      "ordem": 60,
+      "repeticao": 1
+    }
+  ]
+}
