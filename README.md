@@ -113,7 +113,7 @@ Use PARAR para encerrar normalmente; fechamento forcado perde pedidos pendentes.
 As simulacoes foram executadas e analisadas. Consulte
 [resultados e graficos](resultados/simulacao_20260920_114551/RESULTADOS.md).
 A rodada final teve 60 medicoes e 122.000 insercoes verificadas, sem erros.
-O relatorio editavel esta em [docs/Relatorio_M1.docx](docs/Relatorio_M1.docx), com copia em PDF. Preencha os campos de identificacao pendentes e o link do repositorio publico antes da entrega.
+O relatorio foi entregue separadamente e nao faz parte deste repositorio.
 
 
 ## Guia para a apresentacao
@@ -126,4 +126,4 @@ Digite cls ou CLS no cliente para limpar a tela. O banco e o servidor.log perman
 
 ## Atualizacao do retorno (20/09/2026)
 
-Cliente e servidor devem ser atualizados juntos. O Word/PDF descreve o retorno ao cliente e o log, com as medicoes de 20/09 em resultados/simulacao_20260920_114551.
+Cliente e servidor devem ser atualizados juntos. As medicoes de 20/09 estao em resultados/simulacao_20260920_114551.

@@ -7,3 +7,7 @@ __pycache__/
 
 # Evidencias da rodada usada no relatorio atual
 !resultados/simulacao_20260920_114551/**/*.log
+
+# Relatorio entregue separadamente; manter apenas copias locais.
+/docs/Relatorio_M1.docx
+/docs/Relatorio_M1.pdf
