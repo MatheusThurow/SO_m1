@@ -11,45 +11,64 @@
 #endif
 #include <windows.h>
 
-constexpr const char* CAMINHO_PIPE = "\\\\.\\pipe\\projeto_m1_banco";
+using std::runtime_error;
+using std::string;
+
+constexpr const char *CAMINHO_PIPE = "\\\\.\\pipe\\projeto_m1_banco";
+// Valor padrao, substituido pelo argumento informado ao iniciar o servidor.
 constexpr int NUM_THREADS = 4;
 constexpr int MAX_REQUISICAO = 400;
 
+// Cada registro possui um identificador e um nome.
 struct Registro {
     int id;
-    std::string nome;
+    string nome;
 };
 
+// Encapsula o mutex real do Windows para proteger recursos compartilhados.
 class Mutex {
     HANDLE handle;
-public:
+
+  public:
     Mutex() : handle(CreateMutexA(nullptr, FALSE, nullptr)) {
-        if (!handle) throw std::runtime_error("Falha ao criar mutex");
+        if (!handle)
+            throw runtime_error("Falha ao criar mutex");
     }
-    ~Mutex() { CloseHandle(handle); }
-    Mutex(const Mutex&) = delete;
-    Mutex& operator=(const Mutex&) = delete;
+    ~Mutex() {
+        CloseHandle(handle);
+    }
+    // Impede copiar o objeto e fechar o mesmo handle duas vezes.
+    Mutex(const Mutex &) = delete;
+    Mutex &operator=(const Mutex &) = delete;
     void bloquear() {
         DWORD resultado = WaitForSingleObject(handle, INFINITE);
         if (resultado != WAIT_OBJECT_0 && resultado != WAIT_ABANDONED)
-            throw std::runtime_error("Falha ao adquirir mutex");
+            throw runtime_error("Falha ao adquirir mutex");
     }
-    void liberar() { ReleaseMutex(handle); }
+    void liberar() {
+        ReleaseMutex(handle);
+    }
 };
 
-// Libera o mutex automaticamente ao sair do bloco.
+// Bloqueia ao entrar no bloco e libera automaticamente ao sair.
 class GuardaMutex {
-    Mutex& mutex;
-public:
-    explicit GuardaMutex(Mutex& m) : mutex(m) { mutex.bloquear(); }
-    ~GuardaMutex() { mutex.liberar(); }
-    GuardaMutex(const GuardaMutex&) = delete;
-    GuardaMutex& operator=(const GuardaMutex&) = delete;
+    Mutex &mutex;
+
+  public:
+    explicit GuardaMutex(Mutex &m) : mutex(m) {
+        mutex.bloquear();
+    }
+    // O destrutor executa ao sair do bloco, inclusive em retornos antecipados.
+    ~GuardaMutex() {
+        mutex.liberar();
+    }
+    GuardaMutex(const GuardaMutex &) = delete;
+    GuardaMutex &operator=(const GuardaMutex &) = delete;
 };
 
 HANDLE criar_pipe(bool primeira = true);
-void responder_e_fechar(HANDLE pipe, const std::string& resposta);
-bool enviar_requisicao(const std::string& texto, std::string& resposta);
-std::string executar_requisicao(const std::string& texto);
+void responder_e_fechar(HANDLE pipe, const string &resposta);
+bool enviar_requisicao(const string &texto, string &resposta);
+string executar_requisicao(const string &texto);
 
 #endif

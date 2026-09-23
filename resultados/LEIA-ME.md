@@ -12,7 +12,7 @@ A análise final está em
 Foram executadas 60 medições finais com 122.000 inserções, além de quatro
 aquecimentos, em Windows nativo. Todos os resultados foram verificados nos logs.
 
-As pastas de 19/09 documentam versões anteriores e não entram nesta análise.
+Esta entrega inclui apenas a rodada usada no relatorio atual.
 A rodada de 20/09 usa retorno completo ao cliente. METODO.md documenta o canal
 isolado; fontes_medidos preserva os fontes efetivamente compilados e medidos.
 Nenhuma repetição da rodada atual foi excluída.

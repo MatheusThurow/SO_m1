@@ -2,51 +2,70 @@
 #include <sstream>
 #include <vector>
 
-static std::vector<Registro> tabela;
+using std::getline;
+using std::istringstream;
+using std::string;
+using std::to_string;
+using std::vector;
+using std::ws;
+
+// Banco em memoria: os registros sao perdidos quando o servidor encerra.
+// O log registra operacoes, mas nao recarrega o banco automaticamente.
+static vector<Registro> tabela;
 static Mutex mutex_banco;
 
-// Esta funcao so e chamada com o mutex do banco adquirido.
-static std::string executar(const std::string& texto) {
-    std::istringstream entrada(texto);
-    std::string operacao, nome, sobra;
+static string executar(const string &texto) {
+    // Separa operacao, ID e nome; os comandos devem estar em maiusculas.
+    istringstream entrada(texto);
+    string operacao, nome, sobra;
     int id;
-    std::string token_id;
+    string token_id;
     if (!(entrada >> operacao >> token_id))
         return "ERRO: informe operacao e ID inteiro nao negativo";
-    std::istringstream numero(token_id);
+    // Rejeita IDs negativos ou incompletos, como 2abc.
+    istringstream numero(token_id);
     char caractere;
     if (!(numero >> id) || (numero >> caractere) || id < 0)
         return "ERRO: informe operacao e ID inteiro nao negativo";
-    if (operacao != "INSERT" && operacao != "SELECT" &&
-        operacao != "UPDATE" && operacao != "DELETE")
+    if (operacao != "INSERT" && operacao != "SELECT" && operacao != "UPDATE" &&
+        operacao != "DELETE")
         return "ERRO: operacao desconhecida";
     if (operacao == "INSERT" || operacao == "UPDATE") {
-        std::getline(entrada >> std::ws, nome);
+        // Le o restante da linha: o nome pode conter espacos.
+        getline(entrada >> ws, nome);
         if (nome.empty() || nome.size() > 49)
             return "ERRO: nome deve ter de 1 a 49 bytes";
     } else if (entrada >> sobra) {
         return "ERRO: use apenas operacao e ID";
     }
+    // Busca sequencial pelo ID dentro do vetor.
     auto registro = tabela.begin();
-    while (registro != tabela.end() && registro->id != id) ++registro;
+    while (registro != tabela.end() && registro->id != id)
+        ++registro;
+    // A verificacao de duplicidade e a insercao estao sob o mesmo mutex.
     if (operacao == "INSERT") {
-        if (registro != tabela.end()) return "ERRO: ID ja existe";
+        if (registro != tabela.end())
+            return "ERRO: ID ja existe";
         tabela.push_back({id, nome});
         return "OK: inserido";
     }
-    if (registro == tabela.end()) return "ERRO: ID nao encontrado";
+    // SELECT, UPDATE e DELETE exigem que o ID ja exista.
+    if (registro == tabela.end())
+        return "ERRO: ID nao encontrado";
     if (operacao == "SELECT")
-        return "OK: id=" + std::to_string(id) + " nome=" + registro->nome;
+        return "OK: id=" + to_string(id) + " nome=" + registro->nome;
     if (operacao == "UPDATE") {
         registro->nome = nome;
         return "OK: atualizado";
     }
+    // Se chegou aqui, o comando validado e DELETE.
     tabela.erase(registro);
     return "OK: removido";
 }
 
-std::string executar_requisicao(const std::string& texto) {
-    // Leituras tambem precisam de protecao contra escritas simultaneas.
+string executar_requisicao(const string &texto) {
+    // Apenas uma operacao acessa o banco por vez, inclusive SELECT.
+    // Uma consulta tambem precisa de protecao contra alteracoes simultaneas.
     GuardaMutex guarda(mutex_banco);
     return executar(texto);
 }

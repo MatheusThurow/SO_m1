@@ -126,4 +126,4 @@ Digite cls ou CLS no cliente para limpar a tela. O banco e o servidor.log perman
 
 ## Atualizacao do retorno (20/09/2026)
 
-Cliente e servidor devem ser atualizados juntos. Veja [o complemento da documentacao](docs/ATUALIZACAO_RETORNO_CLIENTE.md). O Word/PDF foi atualizado com as medicoes de 20/09. Resultados de 19/09 sao historicos e nao entram na analise atual.
+Cliente e servidor devem ser atualizados juntos. O Word/PDF descreve o retorno ao cliente e o log, com as medicoes de 20/09 em resultados/simulacao_20260920_114551.

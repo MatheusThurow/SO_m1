@@ -1,4 +1,5 @@
 """Teste Windows: processos separados, named pipe e concorrencia real."""
+
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 import subprocess
@@ -7,11 +8,15 @@ import time
 
 raiz = Path(__file__).resolve().parents[1]
 
+# Usa uma pasta temporaria para nao sobrescrever o log da demonstracao.
 with tempfile.TemporaryDirectory(prefix="m1-teste-") as pasta:
     pasta = Path(pasta)
     with (pasta / "console.log").open("w") as console:
-        servidor = subprocess.Popen([str(raiz / "servidor.exe")], cwd=pasta,
-                                    stdout=console, stderr=console)
+        servidor = subprocess.Popen(
+            [str(raiz / "servidor.exe")], cwd=pasta, stdout=console, stderr=console
+        )
+
+        # Aguarda uma condicao com prazo limite para evitar teste travado.
         def esperar(condicao):
             limite = time.monotonic() + 5
             while time.monotonic() < limite:
@@ -27,10 +32,17 @@ with tempfile.TemporaryDirectory(prefix="m1-teste-") as pasta:
             return caminho.read_text() if caminho.exists() else ""
 
         def enviar(comando):
-            return subprocess.run([str(raiz / "cliente.exe")], input=comando + "\n",
-                           text=True, cwd=pasta, capture_output=True,
-                           check=True, timeout=10)
+            return subprocess.run(
+                [str(raiz / "cliente.exe")],
+                input=comando + "\n",
+                text=True,
+                cwd=pasta,
+                capture_output=True,
+                check=True,
+                timeout=10,
+            )
 
+        # Confere o resultado tanto no cliente quanto no log do servidor.
         def verificar(comando, resposta):
             resultado = enviar(comando)
             assert resposta in resultado.stdout, resultado.stdout
@@ -38,10 +50,17 @@ with tempfile.TemporaryDirectory(prefix="m1-teste-") as pasta:
 
         try:
             esperar(lambda: "SERVIDOR PRONTO" in log())
-            sequencia = enviar("INSERT 50 Antes\nSELECT 50\nUPDATE 50 Depois\nSELECT 50\nDELETE 50\nSELECT 50")
+            sequencia = enviar(
+                "INSERT 50 Antes\nSELECT 50\nUPDATE 50 Depois\nSELECT 50\nDELETE 50\nSELECT 50"
+            )
             assert sequencia.stdout.splitlines()[2:] == [
-                "OK: inserido", "OK: id=50 nome=Antes", "OK: atualizado",
-                "OK: id=50 nome=Depois", "OK: removido", "ERRO: ID nao encontrado"]
+                "OK: inserido",
+                "OK: id=50 nome=Antes",
+                "OK: atualizado",
+                "OK: id=50 nome=Depois",
+                "OK: removido",
+                "ERRO: ID nao encontrado",
+            ]
             verificar("INSERT 1 Ana", "OK: inserido")
             verificar("SELECT 1", "OK: id=1 nome=Ana")
             verificar("INSERT 1 Outra", "ERRO: ID ja existe")
@@ -53,17 +72,29 @@ with tempfile.TemporaryDirectory(prefix="m1-teste-") as pasta:
             verificar("SELECT 2 extra", "ERRO:")
             verificar("INSERT 2", "ERRO:")
             verificar("INSERT 2abc Nome", "ERRO:")
-            # Cada cliente deve receber sua propria resposta, sem troca de conexoes.
+
+            # Confere a resposta de cada cliente.
             def conferir_cliente(i):
                 resultado = enviar(f"INSERT {i} Pessoa{i}\nSELECT {i}")
                 assert resultado.stdout.splitlines()[2:] == [
-                    "OK: inserido", f"OK: id={i} nome=Pessoa{i}"]
+                    "OK: inserido",
+                    f"OK: id={i} nome=Pessoa{i}",
+                ]
+
             with ThreadPoolExecutor(max_workers=12) as executor:
                 list(executor.map(conferir_cliente, range(200, 224)))
-            # Clientes concorrentes disputam o mesmo ID: apenas um pode inserir.
-            clientes = [subprocess.Popen([str(raiz / "cliente.exe")], cwd=pasta,
-                        stdin=subprocess.PIPE, stdout=subprocess.DEVNULL,
-                        stderr=subprocess.PIPE, text=True) for _ in range(12)]
+            # Mesmo ID: apenas uma insercao deve ser aceita.
+            clientes = [
+                subprocess.Popen(
+                    [str(raiz / "cliente.exe")],
+                    cwd=pasta,
+                    stdin=subprocess.PIPE,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                )
+                for _ in range(12)
+            ]
             for cliente in clientes:
                 cliente.stdin.write("INSERT 99 Concorrente\n")
                 cliente.stdin.close()
@@ -72,14 +103,25 @@ with tempfile.TemporaryDirectory(prefix="m1-teste-") as pasta:
             esperar(lambda: log().count("INSERT 99 Concorrente =>") == 12)
             assert log().count("INSERT 99 Concorrente => OK: inserido") == 1
             assert log().count("INSERT 99 Concorrente => ERRO: ID ja existe") == 11
-            parada = enviar("\n".join(f"INSERT {i} Pessoa" for i in range(100, 120)) + "\nPARAR")
+            parada = enviar(
+                "\n".join(f"INSERT {i} Pessoa" for i in range(100, 120)) + "\nPARAR"
+            )
             assert "OK: servidor encerrado" in parada.stdout
             assert servidor.wait(timeout=5) == 0
             assert log().count("Pessoa => OK: inserido") == 20
-            desligado = subprocess.run([str(raiz / "cliente.exe")],
-                input="SELECT 1\n", text=True, cwd=pasta, capture_output=True, timeout=10)
+            desligado = subprocess.run(
+                [str(raiz / "cliente.exe")],
+                input="SELECT 1\n",
+                text=True,
+                cwd=pasta,
+                capture_output=True,
+                timeout=10,
+            )
             assert desligado.returncode != 0
-            print("OK: respostas no cliente, CRUD, validacao, concorrencia e encerramento.")
+            print(
+                "OK: respostas no cliente, CRUD, validacao, concorrencia e encerramento."
+            )
+        # Encerra o servidor de teste mesmo quando alguma verificacao falha.
         finally:
             if servidor.poll() is None:
                 servidor.terminate()

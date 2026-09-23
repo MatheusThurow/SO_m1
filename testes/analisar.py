@@ -1,10 +1,12 @@
 """Gera tabelas e graficos a partir de dados.json. Requer matplotlib."""
+
 from collections import Counter
 from pathlib import Path
 import json
 import statistics as st
 import sys
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
@@ -16,74 +18,146 @@ threads = dados["metodo"]["threads"]
 volumes = dados["metodo"]["volumes"]
 assert len(execucoes) == len(threads) * len(volumes) * dados["metodo"]["repeticoes"]
 assert all(x["status"] == "aprovado" and x["erros"] == 0 for x in execucoes)
+# Agrupa por volume e numero de threads; calcula mediana, dispersao e vazao.
 resumo = []
 for n in volumes:
-    base = st.median(x["segundos"] for x in execucoes if x["requisicoes"] == n and x["threads"] == 1)
+    base = st.median(
+        x["segundos"] for x in execucoes if x["requisicoes"] == n and x["threads"] == 1
+    )
     for t in threads:
         grupo = [x for x in execucoes if x["requisicoes"] == n and x["threads"] == t]
         tempos = [x["segundos"] for x in grupo]
+        # A mediana e o valor central das repeticoes ordenadas.
         mediana = st.median(tempos)
-        resumo.append({"requisicoes": n, "threads": t, "repeticoes": len(tempos),
-            "mediana_s": mediana, "media_s": st.mean(tempos), "desvio_padrao_s": st.stdev(tempos),
-            "minimo_s": min(tempos), "maximo_s": max(tempos),
-            "vazao_req_s": n / mediana, "speedup": base / mediana})
+        resumo.append(
+            {
+                "requisicoes": n,
+                "threads": t,
+                "repeticoes": len(tempos),
+                "mediana_s": mediana,
+                "media_s": st.mean(tempos),
+                "desvio_padrao_s": st.stdev(tempos),
+                "minimo_s": min(tempos),
+                "maximo_s": max(tempos),
+                "vazao_req_s": n / mediana,
+                "speedup": base / mediana,
+            }
+        )
+# Salva as estatisticas calculadas; dados.json permanece como registro bruto.
 (pasta / "resumo.json").write_text(json.dumps(resumo, indent=2), encoding="utf-8")
 
-plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 10,
-    "axes.spines.top": False, "axes.spines.right": False})
+plt.rcParams.update(
+    {
+        "font.family": "DejaVu Sans",
+        "font.size": 10,
+        "axes.spines.top": False,
+        "axes.spines.right": False,
+    }
+)
 cores = ["#2563eb", "#0d9488", "#d97706"]
 fig, eixos = plt.subplots(1, 3, figsize=(13, 4.8))
 for eixo, n, cor in zip(eixos, volumes, cores):
     linhas = [x for x in resumo if x["requisicoes"] == n]
     medianas = [x["mediana_s"] * 1000 for x in linhas]
-    erros = [[(x["mediana_s"] - x["minimo_s"]) * 1000 for x in linhas],
-             [(x["maximo_s"] - x["mediana_s"]) * 1000 for x in linhas]]
-    eixo.errorbar(range(len(threads)), medianas, yerr=erros, fmt="o-", color=cor,
-                  linewidth=2, capsize=5, markersize=7, zorder=3)
+    erros = [
+        [(x["mediana_s"] - x["minimo_s"]) * 1000 for x in linhas],
+        [(x["maximo_s"] - x["mediana_s"]) * 1000 for x in linhas],
+    ]
+    eixo.errorbar(
+        range(len(threads)),
+        medianas,
+        yerr=erros,
+        fmt="o-",
+        color=cor,
+        linewidth=2,
+        capsize=5,
+        markersize=7,
+        zorder=3,
+    )
     for i, t in enumerate(threads):
-        pontos = [x["segundos"] * 1000 for x in execucoes if x["requisicoes"] == n and x["threads"] == t]
-        eixo.scatter([i + (j - 2) * .045 for j in range(len(pontos))], pontos,
-                     color=cor, alpha=.4, s=22, zorder=2)
+        pontos = [
+            x["segundos"] * 1000
+            for x in execucoes
+            if x["requisicoes"] == n and x["threads"] == t
+        ]
+        eixo.scatter(
+            [i + (j - 2) * 0.045 for j in range(len(pontos))],
+            pontos,
+            color=cor,
+            alpha=0.4,
+            s=22,
+            zorder=2,
+        )
     eixo.set_xticks(range(len(threads)), threads)
     eixo.set_title(f"{n:,} inserções".replace(",", "."), fontweight="bold")
     eixo.set_xlabel("Threads no servidor")
     eixo.set_ylabel("Tempo total (ms)")
     eixo.set_ylim(bottom=0)
-    eixo.grid(axis="y", alpha=.18)
-fig.suptitle("Tempos medidos por volume e tamanho do pool", fontsize=15, fontweight="bold", y=.98)
-fig.text(.5, .035, "4 clientes · 5 repetições por cenário · pontos = execuções · linha = mediana · barras = mínimo–máximo\nEscalas verticais independentes. Tempo inclui IPC, logs e encerramento; menor é melhor.",
-         ha="center", fontsize=10, color="#475569")
-fig.tight_layout(rect=[0, .14, 1, .91])
+    eixo.grid(axis="y", alpha=0.18)
+fig.suptitle(
+    "Tempos medidos por volume e tamanho do pool",
+    fontsize=15,
+    fontweight="bold",
+    y=0.98,
+)
+fig.text(
+    0.5,
+    0.035,
+    "4 clientes · 5 repetições por cenário · pontos = execuções · linha = mediana · barras = mínimo–máximo\nEscalas verticais independentes. Tempo inclui IPC, logs e encerramento; menor é melhor.",
+    ha="center",
+    fontsize=10,
+    color="#475569",
+)
+fig.tight_layout(rect=[0, 0.14, 1, 0.91])
 fig.savefig(pasta / "tempos.png", dpi=180, facecolor="white")
 fig.savefig(pasta / "tempos.svg", facecolor="white")
 plt.close(fig)
 
+
 def br(numero, casas=3):
     return f"{numero:,.{casas}f}".replace(",", "_").replace(".", ",").replace("_", ".")
 
-tabela = ["| Requisições | Threads | Mediana (s) | Média ± DP (s) | Mín.–máx. (s) | Vazão (req/s) | Aceleração |",
-          "|---:|---:|---:|---:|---:|---:|---:|"]
-for x in resumo:
-    tabela.append(f"| {x['requisicoes']} | {x['threads']} | {br(x['mediana_s'],4)} | {br(x['media_s'],4)} ± {br(x['desvio_padrao_s'],4)} | {br(x['minimo_s'],4)}–{br(x['maximo_s'],4)} | {br(x['vazao_req_s'],0)} | {br(x['speedup'],2)}× |")
 
-distribuicao = ["| Pool | Operações concluídas por cada thread (cinco lotes de 5.000) | Total |",
-               "|---:|---|---:|"]
+tabela = [
+    "| Requisições | Threads | Mediana (s) | Média ± DP (s) | Mín.–máx. (s) | Vazão (req/s) | Aceleração |",
+    "|---:|---:|---:|---:|---:|---:|---:|",
+]
+for x in resumo:
+    tabela.append(
+        f"| {x['requisicoes']} | {x['threads']} | {br(x['mediana_s'],4)} | {br(x['media_s'],4)} ± {br(x['desvio_padrao_s'],4)} | {br(x['minimo_s'],4)}–{br(x['maximo_s'],4)} | {br(x['vazao_req_s'],0)} | {br(x['speedup'],2)}× |"
+    )
+
+distribuicao = [
+    "| Pool | Operações concluídas por cada thread (cinco lotes de 5.000) | Total |",
+    "|---:|---|---:|",
+]
 for t in threads:
     contagem = Counter()
     for x in execucoes:
         if x["threads"] == t and x["requisicoes"] == max(volumes):
             contagem.update({int(k): v for k, v in x["distribuicao_threads"].items()})
-    distribuicao.append(f"| {t} | " + "; ".join(f"T{k}: {v}" for k, v in sorted(contagem.items())) + f" | {sum(contagem.values())} |")
+    distribuicao.append(
+        f"| {t} | "
+        + "; ".join(f"T{k}: {v}" for k, v in sorted(contagem.items()))
+        + f" | {sum(contagem.values())} |"
+    )
 
 maior = {x["threads"]: x for x in resumo if x["requisicoes"] == max(volumes)}
 aumento = (maior[4]["mediana_s"] / maior[1]["mediana_s"] - 1) * 100
 ambiente = dados["ambiente"]
 hardware_path = pasta / "hardware.json"
-hardware = json.loads(hardware_path.read_text(encoding="utf-8-sig")) if hardware_path.exists() else None
-maquina = (f"{hardware['cpu']['Name']}, {hardware['cpu']['NumberOfCores']} núcleos e "
-           f"{hardware['cpu']['NumberOfLogicalProcessors']} processadores lógicos; "
-           f"{br(hardware['sistema']['TotalVisibleMemorySize']/1024/1024,2)} GiB de RAM utilizável pelo Windows."
-           if hardware else f"{ambiente['processador']}; {ambiente['processadores_logicos']} processadores lógicos.")
+hardware = (
+    json.loads(hardware_path.read_text(encoding="utf-8-sig"))
+    if hardware_path.exists()
+    else None
+)
+maquina = (
+    f"{hardware['cpu']['Name']}, {hardware['cpu']['NumberOfCores']} núcleos e "
+    f"{hardware['cpu']['NumberOfLogicalProcessors']} processadores lógicos; "
+    f"{br(hardware['sistema']['TotalVisibleMemorySize']/1024/1024,2)} GiB de RAM utilizável pelo Windows."
+    if hardware
+    else f"{ambiente['processador']}; {ambiente['processadores_logicos']} processadores lógicos."
+)
 
 relatorio = f"""# Simulações e resultados — Projeto M1
 
