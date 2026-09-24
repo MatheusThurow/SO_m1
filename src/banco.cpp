@@ -9,13 +9,13 @@ using std::to_string;
 using std::vector;
 using std::ws;
 
-// Banco em memoria: os registros sao perdidos quando o servidor encerra.
-// O log registra operacoes, mas nao recarrega o banco automaticamente.
+// Banco em memória: os registros são perdidos quando o servidor encerra.
+// O log registra operações, mas não recarrega o banco automaticamente.
 static vector<Registro> tabela;
 static Mutex mutex_banco;
 
 static string executar(const string &texto) {
-    // Separa operacao, ID e nome; os comandos devem estar em maiusculas.
+    // Separa operação, ID e nome; os comandos devem estar em maiúsculas.
     istringstream entrada(texto);
     string operacao, nome, sobra;
     int id;
@@ -31,7 +31,7 @@ static string executar(const string &texto) {
         operacao != "DELETE")
         return "ERRO: operacao desconhecida";
     if (operacao == "INSERT" || operacao == "UPDATE") {
-        // Le o restante da linha: o nome pode conter espacos.
+        // Lê o restante da linha: o nome pode conter espaços.
         getline(entrada >> ws, nome);
         if (nome.empty() || nome.size() > 49)
             return "ERRO: nome deve ter de 1 a 49 bytes";
@@ -42,14 +42,14 @@ static string executar(const string &texto) {
     auto registro = tabela.begin();
     while (registro != tabela.end() && registro->id != id)
         ++registro;
-    // A verificacao de duplicidade e a insercao estao sob o mesmo mutex.
+    // A verificação de duplicidade e a inserção estão sob o mesmo mutex.
     if (operacao == "INSERT") {
         if (registro != tabela.end())
             return "ERRO: ID ja existe";
         tabela.push_back({id, nome});
         return "OK: inserido";
     }
-    // SELECT, UPDATE e DELETE exigem que o ID ja exista.
+    // SELECT, UPDATE e DELETE exigem que o ID já exista.
     if (registro == tabela.end())
         return "ERRO: ID nao encontrado";
     if (operacao == "SELECT")
@@ -58,14 +58,14 @@ static string executar(const string &texto) {
         registro->nome = nome;
         return "OK: atualizado";
     }
-    // Se chegou aqui, o comando validado e DELETE.
+    // Se chegou aqui, o comando validado é DELETE.
     tabela.erase(registro);
     return "OK: removido";
 }
 
 string executar_requisicao(const string &texto) {
-    // Apenas uma operacao acessa o banco por vez, inclusive SELECT.
-    // Uma consulta tambem precisa de protecao contra alteracoes simultaneas.
+    // Apenas uma operação acessa o banco por vez, inclusive SELECT.
+    // Uma consulta também precisa de proteção contra alterações simultaneas.
     GuardaMutex guarda(mutex_banco);
     return executar(texto);
 }

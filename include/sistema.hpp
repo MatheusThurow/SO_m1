@@ -15,7 +15,7 @@ using std::runtime_error;
 using std::string;
 
 constexpr const char *CAMINHO_PIPE = "\\\\.\\pipe\\projeto_m1_banco";
-// Valor padrao, substituido pelo argumento informado ao iniciar o servidor.
+// Valor padrão, substituído pelo argumento informado ao iniciar o servidor.
 constexpr int NUM_THREADS = 4;
 constexpr int MAX_REQUISICAO = 400;
 

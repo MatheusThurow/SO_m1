@@ -11,7 +11,7 @@ using std::getline;
 using std::string;
 using std::system;
 
-// Mantem as instrucoes fixas no topo do cliente não alterar pfv
+// Mantém as instruções fixas no topo do cliente não alterar pfv
 class TelaCliente {
     HANDLE saida = GetStdHandle(STD_OUTPUT_HANDLE);
     DWORD modo_original = 0;
@@ -85,10 +85,10 @@ int main() {
     string linha;
     while (true) {
         tela.preparar();
-        // Le uma linha inteira, preservando os espacos dos nomes.
+        // Lê uma linha inteira, preservando os espaços dos nomes.
         if (!getline(cin, linha))
             break;
-        // SAIR fecha so o cliente; CLS limpa a tela sem mexer no banco ou no log.
+        // SAIR fecha só o cliente; CLS limpa a tela sem mexer no banco ou no log.
         if (linha == "SAIR")
             break;
         if (linha == "cls" || linha == "CLS") {
@@ -101,13 +101,13 @@ int main() {
             cerr << "Comando muito longo.\n";
             return 1;
         }
-        // O cliente nao acessa o banco: envia a linha ao servidor por IPC.
+        // O cliente não acessa o banco: envia a linha ao servidor por IPC.
         string resposta;
         if (!enviar_requisicao(linha, resposta))
             return 1;
-        // So chega aqui depois de receber o resultado; o proximo pedido vem depois.
+        // Só chega aqui depois de receber o resultado; o próximo pedido vem depois.
         cout << resposta << endl;
-        // PARAR foi enviado ao servidor; sai apos receber a confirmacao final.
+        // PARAR foi enviado ao servidor; sai após receber a confirmação final.
         if (linha == "PARAR")
             break;
     }

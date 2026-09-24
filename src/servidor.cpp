@@ -13,14 +13,14 @@ using std::ofstream;
 using std::queue;
 using std::string;
 
-// Guarda o comando e a conexao do cliente que deve receber a resposta.
+// Guarda o comando e a conexão do cliente que deve receber a resposta.
 struct Pedido {
     string texto;
     HANDLE pipe;
 };
 
-// A fila liga a recepcao dos pedidos ao processamento pelo pool.
-// Estas variaveis sao compartilhadas pelas threads do servidor, nao pelo cliente.
+// A fila liga a recepção dos pedidos ao processamento pelo pool.
+// Estas variáveis são compartilhadas pelas threads do servidor, não pelo cliente.
 static queue<Pedido> fila;
 static bool encerrando = false;
 static Mutex mutex_fila;
@@ -31,7 +31,7 @@ static ofstream arquivo_log;
 static DWORD WINAPI atender(LPVOID argumento) {
     int numero = *static_cast<int *>(argumento);
     while (true) {
-        // Semaforo: espera ate haver pedidos na fila.
+        // Semáforo: espera até haver pedidos na fila.
         WaitForSingleObject(tem_requisicao, INFINITE);
         Pedido pedido;
         {
@@ -44,7 +44,7 @@ static DWORD WINAPI atender(LPVOID argumento) {
             pedido = fila.front();
             fila.pop();
         }
-        // O bloco anterior ja liberou o mutex da fila. O banco usa outro mutex.
+        // O bloco anterior já liberou o mutex da fila. O banco usa outro mutex.
         string resposta = executar_requisicao(pedido.texto);
         {
             // Evita misturar mensagens de threads diferentes no log e no terminal.
@@ -56,14 +56,14 @@ static DWORD WINAPI atender(LPVOID argumento) {
             cout << "[thread " << numero << "] " << pedido.texto << " => " << resposta
                       << endl;
         }
-        // Responde fora dos mutexes: a espera pelo cliente nao prende o banco ou o log.
+        // Responde fora dos mutexes: a espera pelo cliente não prende o banco ou o log.
         responder_e_fechar(pedido.pipe, resposta);
     }
     return 0;
 }
 
 int main(int argc, char *argv[]) {
-    // Padrao: 4 threads. Exemplo: servidor.exe 8 escolhe 8 (limite: 1 a 64).
+    // Padrão: 4 threads. Exemplo: servidor.exe 8 escolhe 8 (limite: 1 a 64).
     int quantidade_threads = NUM_THREADS;
     if (argc > 2) {
         cerr << "Uso: servidor.exe [threads de 1 a 64]\n";
@@ -82,10 +82,10 @@ int main(int argc, char *argv[]) {
     if (pipe == INVALID_HANDLE_VALUE)
         return 1;
     // Salva automaticamente na pasta de trabalho em que o servidor foi iniciado.
-    // Ao iniciar novamente, sobrescreve o log anterior (nao usa modo append).
-    // Para guardar uma execucao, copie ou renomeie o log antes de reiniciar.
+    // Ao iniciar novamente, sobrescreve o log anterior (não usa modo append).
+    // Para guardar uma execução, copie ou renomeie o log antes de reiniciar.
     arquivo_log.open("servidor.log");
-    // Comeca em zero: as threads aguardam ate chegar trabalho.
+    // Começa em zero: as threads aguardam até chegar trabalho.
     tem_requisicao = CreateSemaphoreA(nullptr, 0, LONG_MAX, nullptr);
     if (!arquivo_log || !tem_requisicao) {
         cerr << "Falha ao abrir log ou criar semaforo.\n";
@@ -95,7 +95,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     HANDLE threads[64];
-    // Os argumentos das threads permanecem validos ate o pool terminar.
+    // Os argumentos das threads permanecem válidos até o pool terminar.
     int numeros[64];
     int criadas = 0;
     // Cria o pool de threads reutilizadas no atendimento.
@@ -111,7 +111,7 @@ int main(int argc, char *argv[]) {
         arquivo_log << "SERVIDOR PRONTO: " << quantidade_threads << " threads" << endl;
         cout << "Servidor pronto com " << quantidade_threads << " threads." << endl;
         while (true) {
-            // A thread principal recebe conexoes; as threads do pool executam o CRUD.
+            // A thread principal recebe conexões; as threads do pool executam o CRUD.
             BOOL conectado = ConnectNamedPipe(pipe, nullptr);
             if (!conectado && GetLastError() != ERROR_PIPE_CONNECTED) {
                 cerr << "Falha ao receber conexao.\n";
@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
             BOOL recebido = ReadFile(pipe, dados, sizeof(dados), &lidos, nullptr);
             bool valido = recebido && lidos > 0 && lidos <= MAX_REQUISICAO;
             string pedido = valido ? string(dados, lidos) : "";
-            // PARAR encerra a recepcao; os pedidos ja aceitos ainda serao concluidos.
+            // PARAR encerra a recepção; os pedidos já aceitos ainda serão concluídos.
             if (pedido == "PARAR")
                 break;
             // Recebe novos clientes enquanto o pool atende os anteriores.
@@ -153,7 +153,7 @@ int main(int argc, char *argv[]) {
     }
     // Conclui os pedidos antes de encerrar as threads.
     if (criadas) {
-        // Acorda tambem as threads sem trabalho para verificarem o encerramento.
+        // Acorda também as threads sem trabalho para verificarem o encerramento.
         ReleaseSemaphore(tem_requisicao, criadas, nullptr);
         // Aguarda todas as threads terminarem antes de fechar seus handles.
         WaitForMultipleObjects(criadas, threads, TRUE, INFINITE);

@@ -6,8 +6,8 @@ using std::string;
 
 // Canal do Windows entre processos; duplex permite pedido e resposta.
 HANDLE criar_pipe(bool primeira) {
-    // So a primeira instancia impede outro servidor de usar o mesmo nome.
-    // Instancias seguintes permitem manter pedidos de clientes distintos em andamento.
+    // Só a primeira instância impede outro servidor de usar o mesmo nome.
+    // Instâncias seguintes permitem manter pedidos de clientes distintos em andamento.
     HANDLE pipe = CreateNamedPipeA(
         CAMINHO_PIPE, PIPE_ACCESS_DUPLEX | (primeira ? FILE_FLAG_FIRST_PIPE_INSTANCE : 0),
         PIPE_TYPE_MESSAGE | PIPE_READMODE_MESSAGE | PIPE_WAIT, PIPE_UNLIMITED_INSTANCES,
@@ -24,7 +24,7 @@ void responder_e_fechar(HANDLE pipe, const string &resposta) {
     if (WriteFile(pipe, resposta.data(), static_cast<DWORD>(resposta.size()), &escritos, nullptr))
         FlushFileBuffers(pipe);
     DisconnectNamedPipe(pipe);
-    // Libera o recurso do sistema operacional associado a esta conexao.
+    // Libera o recurso do sistema operacional associado a esta conexão.
     CloseHandle(pipe);
 }
 
@@ -33,8 +33,8 @@ bool enviar_requisicao(const string &texto, string &resposta) {
     if (texto.empty() || texto.size() > MAX_REQUISICAO || texto.find('\n') != string::npos)
         return false;
     HANDLE pipe = INVALID_HANDLE_VALUE;
-    // Tenta conectar por ate 5 segundos se o pipe estiver ocupado.
-    // Esse limite nao se aplica a leitura da resposta.
+    // Tenta conectar por até 5 segundos se o pipe estiver ocupado.
+    // Esse limite não se aplica à leitura da resposta.
     DWORD inicio = GetTickCount();
     do {
         pipe = CreateFileA(CAMINHO_PIPE, GENERIC_WRITE | GENERIC_READ, 0, nullptr, OPEN_EXISTING, 0,

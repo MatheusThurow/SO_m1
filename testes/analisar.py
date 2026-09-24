@@ -18,7 +18,7 @@ threads = dados["metodo"]["threads"]
 volumes = dados["metodo"]["volumes"]
 assert len(execucoes) == len(threads) * len(volumes) * dados["metodo"]["repeticoes"]
 assert all(x["status"] == "aprovado" and x["erros"] == 0 for x in execucoes)
-# Agrupa por volume e numero de threads; calcula mediana, dispersao e vazao.
+# Agrupa por volume e número de threads; calcula mediana, dispersão e vazão.
 resumo = []
 for n in volumes:
     base = st.median(
@@ -27,7 +27,7 @@ for n in volumes:
     for t in threads:
         grupo = [x for x in execucoes if x["requisicoes"] == n and x["threads"] == t]
         tempos = [x["segundos"] for x in grupo]
-        # A mediana e o valor central das repeticoes ordenadas.
+        # A mediana é o valor central das repetições ordenadas.
         mediana = st.median(tempos)
         resumo.append(
             {
@@ -43,7 +43,7 @@ for n in volumes:
                 "speedup": base / mediana,
             }
         )
-# Salva as estatisticas calculadas; dados.json permanece como registro bruto.
+# Salva as estatísticas calculadas; dados.json permanece como registro bruto.
 (pasta / "resumo.json").write_text(json.dumps(resumo, indent=2), encoding="utf-8")
 
 plt.rcParams.update(

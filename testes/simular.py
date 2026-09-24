@@ -21,7 +21,7 @@ REPETICOES = 5
 SEMENTE = 20260919
 
 
-# Cada cenario inicia um servidor novo, com banco vazio e logs separados.
+# Cada cenário inicia um servidor novo, com banco vazio e logs separados.
 def executar_cenario(pasta, threads, volume):
     pasta.mkdir(parents=True)
     clientes = []
@@ -151,7 +151,7 @@ def main():
     }
     arquivo = destino / "dados.json"
 
-    # Preserva as medicoes brutas para gerar as estatisticas depois.
+    # Preserva as medições brutas para gerar as estatísticas depois.
     def salvar():
         arquivo.write_text(
             json.dumps(dados, indent=2, ensure_ascii=False), encoding="utf-8"
@@ -169,7 +169,7 @@ def main():
         funcional.stdout + funcional.stderr, encoding="utf-8"
     )
     funcional.check_returncode()
-    # Aquecimentos ficam registrados, mas nao entram nas estatisticas finais.
+    # Aquecimentos ficam registrados, mas não entram nas estatísticas finais.
     for t in THREADS:
         dados["aquecimentos"].append(
             executar_cenario(destino / f"aquecimento_t{t}", t, 1000)
@@ -179,7 +179,7 @@ def main():
     ordem = [
         (t, n, r) for t in THREADS for n in VOLUMES for r in range(1, REPETICOES + 1)
     ]
-    # A semente permite repetir a mesma ordem embaralhada dos cenarios.
+    # A semente permite repetir a mesma ordem embaralhada dos cenários.
     random.Random(SEMENTE).shuffle(ordem)
     for indice, (t, n, r) in enumerate(ordem, 1):
         resultado = executar_cenario(

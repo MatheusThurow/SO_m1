@@ -8,7 +8,7 @@ import time
 
 raiz = Path(__file__).resolve().parents[1]
 
-# Usa uma pasta temporaria para nao sobrescrever o log da demonstracao.
+# Usa uma pasta temporária para não sobrescrever o log da demonstração.
 with tempfile.TemporaryDirectory(prefix="m1-teste-") as pasta:
     pasta = Path(pasta)
     with (pasta / "console.log").open("w") as console:
@@ -16,7 +16,7 @@ with tempfile.TemporaryDirectory(prefix="m1-teste-") as pasta:
             [str(raiz / "servidor.exe")], cwd=pasta, stdout=console, stderr=console
         )
 
-        # Aguarda uma condicao com prazo limite para evitar teste travado.
+        # Aguarda uma condição com prazo limite para evitar teste travado.
         def esperar(condicao):
             limite = time.monotonic() + 5
             while time.monotonic() < limite:
@@ -83,7 +83,7 @@ with tempfile.TemporaryDirectory(prefix="m1-teste-") as pasta:
 
             with ThreadPoolExecutor(max_workers=12) as executor:
                 list(executor.map(conferir_cliente, range(200, 224)))
-            # Mesmo ID: apenas uma insercao deve ser aceita.
+            # Mesmo ID: apenas uma inserção deve ser aceita.
             clientes = [
                 subprocess.Popen(
                     [str(raiz / "cliente.exe")],
@@ -121,7 +121,7 @@ with tempfile.TemporaryDirectory(prefix="m1-teste-") as pasta:
             print(
                 "OK: respostas no cliente, CRUD, validacao, concorrencia e encerramento."
             )
-        # Encerra o servidor de teste mesmo quando alguma verificacao falha.
+        # Encerra o servidor de teste mesmo quando alguma verificação falha.
         finally:
             if servidor.poll() is None:
                 servidor.terminate()
