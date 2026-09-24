@@ -1,129 +1,66 @@
-# Projeto M1 - Windows nativo
+# Projeto M1 — Sistemas Operacionais
 
-Versao basica em C++ para Windows, sem Linux ou WSL. Cliente e servidor sao
-executaveis distintos e usam IPC real por named pipe do Windows. O servidor
-cria quatro threads com CreateThread e protege o vetor do banco com CreateMutexA.
-Um semaforo acorda as threads quando chegam requisicoes. Todo o pool fica em
-src/servidor.cpp. As respostas aparecem no cliente, no servidor e em servidor.log.
+Banco de dados simulado em C++ para Windows. Cliente e servidor se comunicam por named pipe. O servidor usa threads, mutexes e semáforo para processar os pedidos.
 
 ## Compilar
 
-Com g++ (MinGW) no PATH, abra o PowerShell dentro desta pasta:
+Instale o g++ (MinGW) e deixe-o no PATH. Na pasta do projeto, execute:
 
 ```powershell
 .\compilar.bat
 ```
 
-O script cria cliente.exe e servidor.exe com bibliotecas do compilador
-incluidas estaticamente. Se tiver mingw32-make, tambem pode usar o Makefile.
-
-Por padrao sao quatro threads. Para variar o pool, use, por exemplo,
-`.\servidor.exe 8`. Sao aceitos valores de 1 a 64.
-Os executaveis incluidos no ZIP permitem executar sem recompilar.
-
 ## Executar
 
-Abra um PowerShell na pasta do projeto e execute:
+No primeiro PowerShell, inicie o servidor:
 
 ```powershell
-.\servidor.exe
+.\servidor.exe 4
 ```
 
-Abra outro PowerShell na mesma pasta e execute:
+O número indica a quantidade de threads. O padrão é 4 e o limite é de 1 a 64.
+
+Em outro PowerShell, na mesma pasta, abra o cliente:
 
 ```powershell
 .\cliente.exe
 ```
 
-Digite um comando por linha. O resultado aparece no cliente antes de ele enviar o proximo comando:
+## Comandos do cliente
 
 ```text
-INSERT 1 Ana Silva
+INSERT 1 Matheus
 SELECT 1
-UPDATE 1 Maria Silva
-SELECT 1
+UPDATE 1 Matheus Thurow
 DELETE 1
-SELECT 1
-PARAR
 ```
 
-INSERT e UPDATE recebem ID e nome sem aspas; SELECT e DELETE recebem apenas ID.
-IDs sao inteiros nao negativos. Nomes aceitam espacos e ate 49 bytes.
-Comandos usam letras maiusculas. SAIR fecha somente o cliente; PARAR encerra
-o servidor depois de concluir os pedidos recebidos. Evite novos envios durante
-o encerramento. INSERT rejeita ID repetido; as demais operacoes informam quando
-o registro nao existe. Para uma demonstracao simples, use nomes sem acentos,
-evitando diferencas de codificacao entre terminais do Windows.
+Use comandos em maiúsculas. Cada registro tem um ID único e um nome.
 
-Para enviar insercoes independentes de um arquivo, no PowerShell:
+- `CLS` ou `cls`: limpa a tela do cliente.
+- `SAIR`: fecha apenas o cliente.
+- `PARAR`: encerra o servidor após concluir os pedidos recebidos.
 
-```powershell
-Get-Content .\testes\insercoes.txt | .\cliente.exe
-```
+Os resultados aparecem no cliente e são registrados em `servidor.log`. O banco fica na memória e é perdido ao encerrar. O log é sobrescrito quando o servidor inicia novamente.
 
-## Testes
+## Testes e simulações
 
-Encerre qualquer servidor manual antes do teste (o nome do pipe e fixo).
-Com Python 3 instalado, execute:
+Com Python 3 instalado e o servidor manual fechado:
 
 ```powershell
 python .\testes\testar.py
 ```
 
-O teste inicia e encerra seu proprio servidor, usa um log em pasta temporaria,
-verifica CRUD, entradas invalidas, disputa de 12 clientes pelo mesmo ID,
-conclusao de pedidos recebidos e falha de conexao com o servidor desligado.
-
-## Arquivos
- 
-Para repetir as simulacoes de desempenho (Python 3, sem servidor aberto):
+Verifica operações, erros e concorrência. Para medir o desempenho:
 
 ```powershell
 python .\testes\simular.py
 ```
 
-Os dados e logs sao salvos em uma nova subpasta de resultados. Sao comparados
-1, 2, 4 e 8 threads com quatro clientes, em cinco repeticoes de cada carga.
+Os scripts abrem seus próprios servidores. As medições ficam na pasta `resultados`.
 
-- include/sistema.hpp: constantes, registro, declaracoes e auxiliares de mutex.
-- src/cliente.cpp: leitura e envio dos comandos.
-- src/ipc.cpp: criacao do named pipe e envio das mensagens.
-- src/servidor.cpp: recepcao, fila, pool, log e encerramento.
-- src/banco.cpp: CRUD e protecao do banco.
-- docs/fluxo.md: explicacao do funcionamento.
+## Material de apoio
 
-## Relacao com o enunciado
+- [Resultados e gráficos](resultados/simulacao_20260920_114551/RESULTADOS.md)
 
-Esta adaptacao usa APIs nativas equivalentes em conceito: CreateThread no lugar
-de Pthreads, CreateMutexA no lugar de pthread_mutex_t e named pipe Win32 no
-lugar de FIFO POSIX. O enunciado cita bibliotecas equivalentes a Pthreads, mas
-tambem lista primitivas POSIX nos requisitos tecnicos. Confirme com o professor
-a aceitacao destas APIs do Windows; esta versao nao usa literalmente POSIX.
-
-## Limites didaticos
-
-O banco existe somente na memoria e se perde ao encerrar. O log e sobrescrito
-a cada inicio. O pool nao garante ordem de conclusao e o mutex serializa o banco,
-inclusive SELECT. A fila nao possui limite; o protocolo pressupoe clientes locais
-usando o executavel fornecido. O servidor recebe uma conexao por vez e processa
-pedidos pelo pool. Somente uma instancia pode usar o nome fixo do pipe.
-O cliente recebe e imprime o resultado completo pelo named pipe.
-Use PARAR para encerrar normalmente; fechamento forcado perde pedidos pendentes.
-
-As simulacoes foram executadas e analisadas. Consulte
-[resultados e graficos](resultados/simulacao_20260920_114551/RESULTADOS.md).
-A rodada final teve 60 medicoes e 122.000 insercoes verificadas, sem erros.
-O relatorio foi entregue separadamente e nao faz parte deste repositorio.
-
-
-## Guia para a apresentacao
-
-Consulte o [guia de explicacao e testes](GUIA_EXPLICACAO_E_TESTES.md) para estudar o codigo, executar os testes e preparar a apresentacao ao professor.
-
-
-Digite cls ou CLS no cliente para limpar a tela. O banco e o servidor.log permanecem intactos.
-
-
-## Atualizacao do retorno (20/09/2026)
-
-Cliente e servidor devem ser atualizados juntos. As medicoes de 20/09 estao em resultados/simulacao_20260920_114551.
+O relatório foi entregue separadamente.
